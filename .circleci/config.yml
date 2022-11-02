@@ -16,6 +16,22 @@ jobs:
           name: Wait for db # If no database is found in 1 minute the job will fail.
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
+     - image: cimg/postgres:14.0
+    steps:
+      - checkout
+     - run:
+          name: Install dependencies
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+
+      - run: sudo apt install -y postgresql-client || true
+      - run:
+          name: Database Setup
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:structure:load
+      - store_test_results:
+          path: /tmp/test-results
+
 workflows:
   build-workflow:
     jobs:
