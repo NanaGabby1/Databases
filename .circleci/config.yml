@@ -4,6 +4,7 @@ jobs:
   build:
     docker:
       - image: cimg/base:2022.10
+      - image: cimg/postgres:14.0
     steps:
       - checkout # check out the code in the project directory
       - run: echo "hello world" # run the `echo` command
@@ -16,10 +17,10 @@ jobs:
           name: Wait for db # If no database is found in 1 minute the job will fail.
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-     - image: cimg/postgres:14.0
+     
     steps:
       - checkout
-     - run:
+      - run:
           name: Install dependencies
           command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
 
